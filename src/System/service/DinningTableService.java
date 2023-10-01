@@ -27,4 +27,11 @@ public class DinningTableService {
                 dinningTableDAO.update(sql,orderName, orderTel, id);
         return affectedRow > 0;
     }
+
+    //更新餐桌状态的方法
+    public boolean updateTableState(int id, String state) {
+        String sql = "update diningTable set state = ? where id = ?";
+        int update = dinningTableDAO.update(sql, state, id);
+        return update > 0;
+    }
 }

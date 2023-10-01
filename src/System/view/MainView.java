@@ -4,6 +4,7 @@ import System.dao.DinningTableDAO;
 import System.domain.DinningTable;
 import System.domain.Employee;
 import System.domain.Menu;
+import System.service.BillService;
 import System.service.DinningTableService;
 import System.service.EmployeeService;
 import System.service.MenuService;
@@ -23,6 +24,7 @@ public class MainView {
     private EmployeeService employeeService = new EmployeeService();
     private DinningTableService dinningTableService = new DinningTableService();
     private MenuService menuService = new MenuService();
+    private BillService billService = new BillService();
 
     //显示餐桌状态
     public void listTableState() {
@@ -82,6 +84,49 @@ public class MainView {
         System.out.println("显示完毕");
     }
 
+    //完成点餐
+    public void orderServe() {
+        System.out.println("========点餐服务========");
+        System.out.println("请输入点餐的餐桌号(-1取消):");
+        int orderTableId = Utility.readInt();
+        if (orderTableId == -1) {
+            System.out.println("========您已取消点餐========");
+            return;
+        }
+        System.out.println("请输入点餐的菜品号(-1取消):");
+        int orderMenuId = Utility.readInt();
+        if (orderMenuId == -1) {
+            System.out.println("========您已取消点餐========");
+            return;
+        }
+        System.out.println("请输入点餐的菜品量(-1取消):");
+        int orderNums = Utility.readInt();
+        if (orderNums == -1) {
+            System.out.println("========您已取消点餐========");
+            return;
+        }
+
+        //开始验证
+        DinningTable dinningTable = dinningTableService.getDiningTableById(orderTableId);
+        if (dinningTable == null) {
+            System.out.println("餐桌不存在！");
+            return;
+        }
+
+        Menu menu = menuService.getMenuById(orderMenuId);
+        if (menu == null) {
+            System.out.println("餐品不存在！");
+            return;
+        }
+
+        //验证成功，正式开始点菜
+        if (billService.order(orderMenuId, orderNums, orderTableId)) {
+            System.out.println("=========点餐成功========");
+        } else {
+            System.out.println("========点餐失败========");
+        }
+    }
+
     //主菜单
     public void mainMenu() {//一级菜单
         while(loop) {
@@ -125,7 +170,7 @@ public class MainView {
                                     listMenu();
                                     break;
                                 case "4" :
-                                    System.out.println("\t\t 4 点餐服务");
+                                    orderServe();
                                     break;
                                 case "5" :
                                     System.out.println("\t\t 5 查看账单");
@@ -159,4 +204,6 @@ public class MainView {
         }
         System.out.println("您已退出系统");
     }
+
+
 }

@@ -4,12 +4,12 @@ public class Menu {
     private Integer id;
     private String name;
     private String type;
-    private String price;
+    private Double price;
 
     public Menu() {
     }
 
-    public Menu(Integer id, String name, String type, String price) {
+    public Menu(Integer id, String name, String type, Double price) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -40,11 +40,11 @@ public class Menu {
         this.type = type;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
