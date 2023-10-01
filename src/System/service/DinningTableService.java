@@ -34,4 +34,11 @@ public class DinningTableService {
         int update = dinningTableDAO.update(sql, state, id);
         return update > 0;
     }
+
+    //更新餐桌状态为空状态
+    public boolean updateTableStateNull(int id, String state) {
+        String sql = "update diningTable set state = ?, orderName = '', orderTel = '' where id = ?";
+        int update = dinningTableDAO.update(sql, state, id);
+        return update > 0;
+    }
 }

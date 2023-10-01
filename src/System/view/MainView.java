@@ -1,6 +1,7 @@
 package System.view;
 
 import System.dao.DinningTableDAO;
+import System.domain.Bill;
 import System.domain.DinningTable;
 import System.domain.Employee;
 import System.domain.Menu;
@@ -127,6 +128,58 @@ public class MainView {
         }
     }
 
+    //显示账单信息
+    public void listBill() {
+        System.out.println("\n编号\t\t菜品号\t\t菜品量\t\t金额\t\t桌号\t\t日期\t\t\t\t\t\t\t状态");
+        List<Bill> billList = billService.list();
+        for (Bill bill : billList) {
+            System.out.println(bill);
+        }
+        System.out.println("输出完毕");
+    }
+
+    //结账
+    public void payBill() {
+        System.out.println("========结账服务========");
+        System.out.println("请选择要结账的餐桌编号(-1取消)");
+        int TableId = Utility.readInt();
+        if (TableId == -1) {
+            System.out.println("========您已取消========");
+            return;
+        }
+        DinningTable table = dinningTableService.getDiningTableById(TableId);
+        //1.验证餐桌是否存在
+        if (table == null) {
+            System.out.println("========餐桌不存在=========");
+            return;
+        }
+
+        //2.验证餐桌是否有账单需要支付
+        if (!billService.hasNotPayByTableId(TableId)) {
+            System.out.println("========该餐桌无账单========");
+            return;
+        }
+
+        System.out.println("结账方式(crash/wechat/AliPay/ApplePay)[回车退出]");
+        String payMode = Utility.readString(10, "");
+        if (payMode.equals("")) {
+            System.out.println("========取消结账========");
+            return;
+        }
+        char key = Utility.readConfirmSelection();
+        if (key == 'Y') {
+            if (billService.payBill(TableId, payMode)) {
+                System.out.println("结账成功");
+            } else {
+                System.out.println("结账失败");
+            }
+        } else {
+            System.out.println("========取消结账========");
+        }
+
+
+    }
+
     //主菜单
     public void mainMenu() {//一级菜单
         while(loop) {
@@ -173,10 +226,10 @@ public class MainView {
                                     orderServe();
                                     break;
                                 case "5" :
-                                    System.out.println("\t\t 5 查看账单");
+                                    listBill();
                                     break;
                                 case "6" :
-                                    System.out.println("\t\t 6 结账");
+                                    payBill();
                                     break;
                                 case "9" :
                                     loop = false;
